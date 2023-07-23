@@ -1,6 +1,7 @@
 # this was hastily put together from a notebook, there might be bugs :(
 import argparse
 import json
+import os
 from itertools import chain
 
 import torch
@@ -30,9 +31,9 @@ def main(args):
     tokenizer.model_max_length = train_config.context_length
     model = AutoModelForCausalLM.from_pretrained(
         train_config.model_id,
-        device_map="auto",  # device_map={"":0}, # entire model needs to be on cuda for lora, make sure it'll fit
+        device_map='auto',  # device_map={"":0}, # entire model needs to be on cuda for lora, make sure it'll fit
         load_in_8bit=train_config.load_in_8bit,
-        # load_in_4bit=train_config.load_in_4bit,
+        load_in_4bit=train_config.load_in_4bit,
         trust_remote_code=True,
         torch_dtype=train_config.torch_dtype,
     )
@@ -57,9 +58,9 @@ def main(args):
             task_type="CAUSAL_LM",
         )
 
-        for name, module in model.named_modules():
-            if "norm" in name:
-                module = module.to(torch.float32)
+        #for name, module in model.named_modules():
+            #if "norm" in name:
+                #module = module.to(torch.float32)
                 
         model = get_peft_model(model, config)
         print_trainable_parameters(model)
@@ -157,9 +158,9 @@ def main(args):
         data = data.map(
             lambda x: tokenize(x, tokenizer, train_config),
             batched=True,
-            remove_columns=list(data.features)
-            if not train_config.dataset_kwargs["streaming"]
-            else train_config.all_columns,
+            remove_columns=['text']
+            #if not train_config.dataset_kwargs["streaming"]
+            #else train_config.all_columns,
         )
         data = data.map(
             lambda x: group_texts(x, train_config),
@@ -191,16 +192,24 @@ def main(args):
     model.config.use_cache = False
     trainer.train()
     if train_config.output_is_repo:
-        if train_config.use_lora:
-            model.push_to_hub(train_config.output)
-            return
-        model.push_to_hub(train_config.output)
-        tokenizer.push_to_hub(train_config.output)
+        #if train_config.use_lora:
+        #    model.push_to_hub(train_config.output)
+        #    return
+        #model.push_to_hub(train_config.output)
+        #tokenizer.push_to_hub(train_config.output)
+        model.save_pretrained(train_config.output.split("/")[-1])
+        from huggingface_hub import HfApi
+        api.upload_folder(
+            folder_path=train_config.output.split("/")[-1],
+            path_in_repo=train_config.output.split("/")[-1],
+            repo_id="/".join(train_config.output.split("/")[:-1]),
+            repo_type="model"
+	)
     else:
+        #model.save_pretrained(train_config.output)
+        #if not train_config.use_lora:
+        #    tokenizer.save_pretrained(train_config.output)
         model.save_pretrained(train_config.output)
-        if not train_config.use_lora:
-            tokenizer.save_pretrained(train_config.output)
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", default="config.json")
