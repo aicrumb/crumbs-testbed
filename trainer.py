@@ -78,7 +78,7 @@ def main(args):
             else None
         )
         if inputs is not None:
-            input_roles = [config.dataset_user_role] * len(inputs)
+            input_roles = [config.dataset_input_role] * len(inputs)
         outputs = examples[config.dataset_output_column]
         output_roles = [config.dataset_assistant_role] * len(outputs)
 
