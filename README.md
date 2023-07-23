@@ -14,7 +14,7 @@ example config.json setup for the trainer with comments (not valid json, dont us
     "lora": {
         "rank": 4, 
         "alpha": 32, 
-        "target_modules": ["query_key_value"], // q_proj, k_proj, v_proj, o_proj
+        "target_modules": ["query_key_value"], // q_proj, k_proj, v_proj, o_proj is what you should use for llama models
         "lora_dropout": 0.05 // consider increasing for multiple epochs
     }, 
     // alpaca will utilize the dataset_* arguments to concat parts of the dataset
