@@ -3,7 +3,7 @@ you can NOT judge the code because it runs on my local machine for my local mach
 
 ### trainer
 
-example config setup with comments (not valid json, dont use comments in your config)
+example config.json setup for the trainer with comments (not valid json, dont use comments in your config)
 ```
 {
     "model_id": "EleutherAI/pythia-70m", 
