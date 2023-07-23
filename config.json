@@ -1,0 +1,45 @@
+{
+    "model_id": "EleutherAI/pythia-70m", 
+    "bf16": true, 
+    "load_in_8bit": true,
+    "load_in_4bit": false,
+    "optim": "adamw_hf", 
+    "use_lora": true,
+    "lora": {
+        "rank": 4, 
+        "alpha": 32, 
+        "target_modules": ["query_key_value"],
+        "lora_dropout": 0.05
+    }, 
+    "data_processing": "alpaca",
+    "learning_rate": 0.0001, 
+    
+    "batch_size": 4,
+    "gradient_accumulation_steps": 2, 
+    "context_length": 256, 
+    "logging_steps": 8, 
+    
+    "max_steps": 256, 
+    "num_train_epochs": -1, 
+    "warmup_steps": 128,
+    
+    "dataset_text_column": "text",
+    
+    "dataset_instruction_column": "message_1", 
+    "dataset_input_column": "none",
+    "dataset_output_column": "message_2", 
+
+    "dataset_user_role": "### human:", 
+    "dataset_assistant_role": "### response:", 
+    "cluster": "none",
+    
+    "all_columns": ["role_1", "topic", "sub_topic", "message_1", "message_2"],
+    "dataset_kwargs": {
+        "path": "camel-ai/math", 
+        "name": null,
+        "streaming": false, 
+        "split": "train"
+    }, 
+    "output_is_repo": true,
+    "output": "crumb/trainer-model"
+}
