@@ -1,45 +1,47 @@
 {
-    "model_id": "EleutherAI/pythia-70m", 
+    "model_id": "NousResearch/Nous-Hermes-Llama2-13b", 
     "bf16": true, 
-    "load_in_8bit": true,
+    "load_in_8bit": false,
     "load_in_4bit": false,
     "optim": "adamw_hf", 
     "use_lora": true,
     "lora": {
-        "rank": 4, 
+        "rank": 32, 
         "alpha": 32, 
-        "target_modules": ["query_key_value"],
+        "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"],
         "lora_dropout": 0.05
     }, 
-    "data_processing": "alpaca",
+    "data_processing": "alpaca-packing",
     "learning_rate": 0.0001, 
     
-    "batch_size": 4,
-    "gradient_accumulation_steps": 2, 
-    "context_length": 256, 
+    "batch_size": 2,
+    "gradient_accumulation_steps": 4, 
+    "context_length": 4096, 
     "logging_steps": 8, 
     
-    "max_steps": 256, 
-    "num_train_epochs": -1, 
+    "max_steps": -1, 
+    "num_train_epochs": 1, 
     "warmup_steps": 128,
     
     "dataset_text_column": "text",
     
-    "dataset_instruction_column": "message_1", 
-    "dataset_input_column": "none",
-    "dataset_output_column": "message_2", 
+    "dataset_instruction_column": "instruction", 
+    "dataset_input_column": "input",
+    "dataset_output_column": "output", 
 
     "dataset_user_role": "### human:", 
+    "dataset_input_role": "### input:",
     "dataset_assistant_role": "### response:", 
     "cluster": "none",
     
-    "all_columns": ["role_1", "topic", "sub_topic", "message_1", "message_2"],
+    "all_columns": ["output", "instruction", "input"],
     "dataset_kwargs": {
-        "path": "camel-ai/math", 
+        "path": "json",
+	"data_files": ["camel-ai-datasets/combined-math.json"], 
         "name": null,
         "streaming": false, 
-        "split": "train"
+        "split": "train"    
     }, 
-    "output_is_repo": true,
-    "output": "crumb/trainer-model"
+    "output_is_repo": false,
+    "output": "hermes-math-adapter"
 }
